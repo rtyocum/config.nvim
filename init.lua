@@ -126,6 +126,8 @@ vim.keymap.set('v', '<leader>y', '"+y', { desc = 'Yank to clipboard' })
 vim.keymap.set('n', '<leader>p', '"+p', { desc = 'Paste from clipboard' })
 vim.keymap.set('v', '<leader>p', '"+p', { desc = 'Paste from clipboard' })
 
+vim.keymap.set('n', '<C-_>', 'gcc', { desc = 'Comment line', remap = true })
+
 -- Enable break indent
 vim.opt.breakindent = true
 
@@ -946,6 +948,7 @@ require('lazy').setup({
   require 'plugins.gitsigns', -- adds gitsigns recommend keymaps
   require 'plugins.copilot',
   require 'plugins.bufferline',
+  -- require 'plugins.comment',
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
@@ -977,6 +980,8 @@ require('lazy').setup({
     },
   },
 })
+
+-- var = '1'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
