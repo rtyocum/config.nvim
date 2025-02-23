@@ -127,6 +127,7 @@ vim.keymap.set('n', '<leader>p', '"+p', { desc = 'Paste from clipboard' })
 vim.keymap.set('v', '<leader>p', '"+p', { desc = 'Paste from clipboard' })
 
 vim.keymap.set('n', '<C-_>', 'gcc', { desc = 'Comment line', remap = true })
+vim.keymap.set('v', '<C-_>', 'gc', { desc = 'Comment line', remap = true })
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -661,6 +662,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'jdtls',
         'java-debug-adapter',
         'java-test',
         'isort',
