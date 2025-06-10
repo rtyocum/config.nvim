@@ -451,7 +451,7 @@ require('lazy').setup({
     },
   },
   { 'Bilal2453/luvit-meta', lazy = true },
-  { 'mfussenegger/nvim-jdtls', ft = 'java' },
+  { 'mfussenegger/nvim-jdtls', ft = 'java', dependencies = 'mfussenegger/nvim-dap' },
   {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
@@ -615,10 +615,11 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        clangd = {},
         gopls = {},
+        svelte = {},
         pyright = {},
         rust_analyzer = {},
+        html = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -626,6 +627,9 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {},
+        protols = {},
+        dockerls = {},
+        docker_compose_language_service = {},
         --
         emmet_ls = {},
         lemminx = {},
@@ -682,6 +686,8 @@ require('lazy').setup({
           end,
         },
       }
+
+      require('lspconfig').clangd.setup {}
     end,
   },
 
@@ -941,7 +947,7 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'plugins.autopairs',
@@ -983,6 +989,32 @@ require('lazy').setup({
   },
 })
 
+local max_buffers = 8
+
+local function enforce_buffer_limit()
+  vim.schedule(function()
+    local bufs = vim.fn.getbufinfo { buflisted = 1 }
+
+    if #bufs > max_buffers then
+      -- Sort by last used, descending
+      table.sort(bufs, function(a, b)
+        return a.lastused > b.lastused
+      end)
+
+      -- Keep the most recent N, delete the rest
+      for i = max_buffers + 1, #bufs do
+        local bufnr = bufs[i].bufnr
+        if vim.api.nvim_buf_is_loaded(bufnr) and vim.fn.buflisted(bufnr) == 1 then
+          vim.cmd('silent! bd ' .. bufnr)
+        end
+      end
+    end
+  end)
+end
+
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = enforce_buffer_limit,
+})
 -- var = '1'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
